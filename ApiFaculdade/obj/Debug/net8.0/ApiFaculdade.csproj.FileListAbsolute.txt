@@ -1,0 +1,8 @@
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.csproj.AssemblyReference.cache
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.AssemblyInfoInputs.cache
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.AssemblyInfo.cs
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.csproj.CoreCompileInputs.cache
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\nycol\Desktop\Sistema Faculdade\ApiFaculdade\obj\Debug\net8.0\ApiFaculdade.sourcelink.json
