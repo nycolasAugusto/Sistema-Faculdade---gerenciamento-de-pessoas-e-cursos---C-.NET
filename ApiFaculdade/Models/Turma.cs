@@ -7,4 +7,11 @@
 // periodo que a turam esta
 
 
+namespace ApiFaculdade.Models{
+    public class Turma{
+        public int Id{get;set;}
+
+    }
+}
+
 

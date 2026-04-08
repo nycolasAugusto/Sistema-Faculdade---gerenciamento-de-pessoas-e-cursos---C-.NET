@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+
 using ApiFaculdade.Controllers; //enxergar controllers
 using ApiFaculdade.Models;
+using ApiFaculdade.Data;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers(); // add os controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
 
 var app = builder.Build();
 
