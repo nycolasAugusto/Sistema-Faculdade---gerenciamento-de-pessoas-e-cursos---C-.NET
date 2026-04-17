@@ -1,8 +1,8 @@
 using ApiFaculdade.Models;
 using ApiFaculdade.Data;
-using ApiFaculdade.Repositories.Interfaces;
+using ApiFaculdade.Repository.Interfaces;
 
-namespace ApiFaculdade.Repositories
+namespace ApiFaculdade.Repository
 {
     public class AlunoRepository : IAlunoRepository
     {
