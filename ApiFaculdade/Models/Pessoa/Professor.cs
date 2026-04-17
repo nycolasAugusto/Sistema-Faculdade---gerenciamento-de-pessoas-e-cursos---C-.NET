@@ -1,5 +1,4 @@
-// herda pesso
-// turmas atreladas
+
 using ApiFaculdade.Models;
 
 

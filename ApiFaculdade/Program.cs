@@ -13,8 +13,11 @@ builder.Services.AddControllers(); // add os controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
-builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 
+//escopos de IRepositorys
+
+builder.Services.AddScoped<ICursoRepository, CursoRepository>();
+builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 var app = builder.Build();
 
 app.MapControllers();

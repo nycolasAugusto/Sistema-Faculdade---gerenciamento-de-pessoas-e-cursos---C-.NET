@@ -1,31 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
 using ApiFaculdade.Models;
-using ApiFaculdade.Data;
+using ApiFaculdade.Repositories.Interfaces;
 
-
-namespace ApiFaculdade.Controllers{
-
+namespace ApiFaculdade.Controllers
+{
     [ApiController]
-    [Route("api/alunos")]
-    public class AlunoController : ControllerBase{
+    [Route("api/[controller]")]
+    public class AlunoController : ControllerBase
+    {
+        private readonly IAlunoRepository _alunoRepository;
 
-        private readonly AppDbContext _context;
-
-        public AlunoController(AppDbContext context){
-            _context = context;
+        // Injetando a Interface em vez do Contexto
+        public AlunoController(IAlunoRepository alunoRepository)
+        {
+            _alunoRepository = alunoRepository;
         }
 
         [HttpGet]
-        public IActionResult Get(){
-            return Ok(_context.Alunos.ToList());
+        public IActionResult Get()
+        {
+            return Ok(_alunoRepository.GetAll());
         }
 
-
         [HttpPost]
-        public IActionResult Post([FromBody] Aluno aluno){
-            _context.Alunos.Add(aluno);
-            _context.SaveChanges();
-            return Ok(aluno);
+        public IActionResult Post([FromBody] Aluno aluno)
+        {
+            if (aluno == null) return BadRequest();
+            
+            _alunoRepository.Add(aluno);
+            return CreatedAtAction(nameof(Get), new { id = aluno.Matricula }, aluno);
         }
     }
 }

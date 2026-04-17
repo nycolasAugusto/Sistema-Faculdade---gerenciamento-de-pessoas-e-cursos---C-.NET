@@ -1,5 +1,9 @@
 using ApiFaculdade.Enums;
 
+
+
+
+
 namespace ApiFaculdade.Models{
     public class Curso{
         public int Id{get;set;}

@@ -1,7 +1,4 @@
-//id
-// nome
-// nascimento 
-// contato
+
 using ApiFaculdade.Models;
 
 namespace ApiFaculdade.Models{
