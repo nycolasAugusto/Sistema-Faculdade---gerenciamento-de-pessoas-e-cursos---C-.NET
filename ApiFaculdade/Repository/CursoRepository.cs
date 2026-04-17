@@ -1,6 +1,7 @@
 using ApiFaculdade.Models;
 using ApiFaculdade.Data; 
 using Microsoft.EntityFrameworkCore;
+using ApiFaculdade.Repository.interfaces;
 
 namespace ApiFaculdade.Repository{
 

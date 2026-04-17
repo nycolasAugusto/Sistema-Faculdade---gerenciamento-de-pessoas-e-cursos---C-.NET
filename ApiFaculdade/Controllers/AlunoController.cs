@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ApiFaculdade.Models;
-using ApiFaculdade.Repositories.Interfaces;
+using ApiFaculdade.Repository.interfaces;
 
 namespace ApiFaculdade.Controllers
 {

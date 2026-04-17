@@ -4,7 +4,7 @@ using ApiFaculdade.Controllers; //enxergar controllers
 using ApiFaculdade.Models;
 using ApiFaculdade.Data;
 using ApiFaculdade.Repository; // enxergar repository
-
+using ApiFaculdade.Repository.interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +18,9 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data S
 
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
+builder.Services.AddScoped<ICoordenadorRepository, CoordenadorRepository>();
+
+
 var app = builder.Build();
 
 app.MapControllers();

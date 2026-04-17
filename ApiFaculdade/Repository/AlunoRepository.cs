@@ -1,6 +1,6 @@
 using ApiFaculdade.Models;
 using ApiFaculdade.Data;
-using ApiFaculdade.Repository.Interfaces;
+using ApiFaculdade.Repository.interfaces;
 
 namespace ApiFaculdade.Repository
 {

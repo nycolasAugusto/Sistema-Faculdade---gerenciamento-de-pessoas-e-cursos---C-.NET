@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Models;
 using ApiFaculdade.Data;
+using ApiFaculdade.Repository.interfaces;
 
-namespace ApiFaculdade.Repository;
+namespace ApiFaculdade.Controllers;
 
 
     [ApiController]
