@@ -1,7 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-
-using ApiFaculdade.Controllers; //enxergar controllers
-using ApiFaculdade.Models;
 using ApiFaculdade.Data;
 using ApiFaculdade.Repository; // enxergar repository
 using ApiFaculdade.Repository.interfaces;
@@ -18,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data S
 
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
-builder.Services.AddScoped<ICoordenadorRepository, CoordenadorRepository>();
+builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 
 
 var app = builder.Build();

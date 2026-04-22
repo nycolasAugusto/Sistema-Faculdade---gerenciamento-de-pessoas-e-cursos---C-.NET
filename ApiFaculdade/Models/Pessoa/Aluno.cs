@@ -4,20 +4,19 @@
 // periodo que esta 
 //matricula
 using ApiFaculdade.Enums;
-using ApiFaculdade.Models;
 
-namespace ApiFaculdade.Models{
+namespace ApiFaculdade.Models
+{
+    public class Aluno
+    {
+        public int Id { get; set; }
+        public string Matricula { get; set; } = string.Empty;
 
-    public class Aluno : Pessoa{
-
-        public string Matricula {get; set ;}
-        public Curso cursoAluno{get; set ;}
-        public int periodoAtual{get; set ;}
-        public List<MateriasEnum> ListaDematerias{get; set ;}
-
+        public string Nome { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public Cursos Curso { get; set; }
+        public int Periodo { get; set; }
+        public DateTime DataMatricula { get; set; }
+        public bool Ativo { get; set; } = true;
     }
-
-
-
-
 }
