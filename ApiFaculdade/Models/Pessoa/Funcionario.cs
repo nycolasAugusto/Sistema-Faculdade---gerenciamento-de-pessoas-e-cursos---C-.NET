@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace ApiFaculdade.Models
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum CargoFuncionario
     {
         Professor,
@@ -21,6 +24,6 @@ namespace ApiFaculdade.Models
         public CargoFuncionario Cargo { get; set; }
         public string Departamento { get; set; } = string.Empty;
         public DateTime DataAdmissao { get; set; }
-        public bool Ativo { get; set; } = true;
+        public bool? Ativo { get; set; } = true;
     }
 }

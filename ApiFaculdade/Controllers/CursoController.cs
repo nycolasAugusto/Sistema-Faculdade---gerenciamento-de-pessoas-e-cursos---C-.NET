@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Models;
 using ApiFaculdade.Data;
-using ApiFaculdade.Repository.interfaces;
+using ApiFaculdade.Repository.interfaces; 
+using ApiFaculdade.DTOS; 
 
 namespace ApiFaculdade.Controllers;
 
@@ -19,23 +20,23 @@ namespace ApiFaculdade.Controllers;
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get() => Ok(await _repository.GetAllAsync());
-
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id) {
+        public async Task<ActionResult<Curso>> GetCurso(int id)
+        {
             var curso = await _repository.GetByIdAsync(id);
-            return curso == null ? NotFound() : Ok(curso);
+            if (curso == null) return NotFound();
+            return Ok(curso);
         }
 
+        
+
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Curso curso) {
-            try {
-                await _repository.AddAsync(curso);
-                return CreatedAtAction(nameof(GetById), new { id = curso.Id }, curso);
-            } catch (Exception ex) {
-                return BadRequest(ex.Message);
-            }
+        public async Task<ActionResult<Curso>> PostCurso(CriarCursoDto dto)
+        {
+            
+            var cursoSalvo = await _repository.AdicionarAsync(dto);
+
+            return CreatedAtAction(nameof(GetCurso), new { id = cursoSalvo.Id }, cursoSalvo);
         }
 
         [HttpPut("{id}")]

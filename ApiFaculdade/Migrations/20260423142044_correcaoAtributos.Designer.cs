@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiFaculdade.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260422005840_AdicionarAlunosFuncionarios")]
-    partial class AdicionarAlunosFuncionarios
+    [Migration("20260423142044_correcaoAtributos")]
+    partial class correcaoAtributos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,7 +29,7 @@ namespace ApiFaculdade.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Curso")
+                    b.Property<int>("CursoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DataMatricula")
@@ -50,31 +50,16 @@ namespace ApiFaculdade.Migrations
                     b.Property<int>("Periodo")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("Alunos");
-                });
-
-            modelBuilder.Entity("ApiFaculdade.Models.Coordenador", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int?>("TurmaId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Contato")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DataNascimento")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Coordenadores");
+                    b.HasIndex("CursoId");
+
+                    b.HasIndex("TurmaId");
+
+                    b.ToTable("Alunos");
                 });
 
             modelBuilder.Entity("ApiFaculdade.Models.Curso", b =>
@@ -83,18 +68,7 @@ namespace ApiFaculdade.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AlunosIds")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Campus")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CoordenadorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Coordenadores")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -108,15 +82,18 @@ namespace ApiFaculdade.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Nome")
+                    b.Property<int>("NomeCursoEnum")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TempoDoCursoEmMeses")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("TurmaId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CoordenadorId");
+                    b.HasIndex("TurmaId");
 
                     b.ToTable("Cursos");
                 });
@@ -127,10 +104,13 @@ namespace ApiFaculdade.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("Ativo")
+                    b.Property<bool?>("Ativo")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Cargo")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CursoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("DataAdmissao")
@@ -154,29 +134,9 @@ namespace ApiFaculdade.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CursoId");
+
                     b.ToTable("Funcionarios");
-                });
-
-            modelBuilder.Entity("ApiFaculdade.Models.Professor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Contato")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DataNascimento")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Professores");
                 });
 
             modelBuilder.Entity("ApiFaculdade.Models.Turma", b =>
@@ -184,17 +144,6 @@ namespace ApiFaculdade.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("AlunosIds")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("CoordenadorId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("CursosIds")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DataFim")
                         .HasColumnType("TEXT");
@@ -206,51 +155,68 @@ namespace ApiFaculdade.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PeriodoAtual")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("ProfessorId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CoordenadorId");
 
                     b.HasIndex("ProfessorId");
 
                     b.ToTable("Turmas");
                 });
 
+            modelBuilder.Entity("ApiFaculdade.Models.Aluno", b =>
+                {
+                    b.HasOne("ApiFaculdade.Models.Curso", "curso")
+                        .WithMany("Alunos")
+                        .HasForeignKey("CursoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApiFaculdade.Models.Turma", null)
+                        .WithMany("Alunos")
+                        .HasForeignKey("TurmaId");
+
+                    b.Navigation("curso");
+                });
+
             modelBuilder.Entity("ApiFaculdade.Models.Curso", b =>
                 {
-                    b.HasOne("ApiFaculdade.Models.Coordenador", null)
-                        .WithMany("listaDeCursos")
-                        .HasForeignKey("CoordenadorId");
+                    b.HasOne("ApiFaculdade.Models.Turma", null)
+                        .WithMany("Cursos")
+                        .HasForeignKey("TurmaId");
+                });
+
+            modelBuilder.Entity("ApiFaculdade.Models.Funcionario", b =>
+                {
+                    b.HasOne("ApiFaculdade.Models.Curso", null)
+                        .WithMany("Coordenador")
+                        .HasForeignKey("CursoId");
                 });
 
             modelBuilder.Entity("ApiFaculdade.Models.Turma", b =>
                 {
-                    b.HasOne("ApiFaculdade.Models.Coordenador", null)
-                        .WithMany("listaDeTurmas")
-                        .HasForeignKey("CoordenadorId");
-
-                    b.HasOne("ApiFaculdade.Models.Professor", null)
-                        .WithMany("listaDeTurmas")
+                    b.HasOne("ApiFaculdade.Models.Funcionario", "Professor")
+                        .WithMany()
                         .HasForeignKey("ProfessorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Professor");
                 });
 
-            modelBuilder.Entity("ApiFaculdade.Models.Coordenador", b =>
+            modelBuilder.Entity("ApiFaculdade.Models.Curso", b =>
                 {
-                    b.Navigation("listaDeCursos");
+                    b.Navigation("Alunos");
 
-                    b.Navigation("listaDeTurmas");
+                    b.Navigation("Coordenador");
                 });
 
-            modelBuilder.Entity("ApiFaculdade.Models.Professor", b =>
+            modelBuilder.Entity("ApiFaculdade.Models.Turma", b =>
                 {
-                    b.Navigation("listaDeTurmas");
+                    b.Navigation("Alunos");
+
+                    b.Navigation("Cursos");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,4 @@
-using ApiFaculdade.DTOs;
+using ApiFaculdade.DTOS;
 using ApiFaculdade.Enums;
 using ApiFaculdade.Models;
 using ApiFaculdade.Repository.interfaces;
@@ -61,18 +61,12 @@ namespace ApiFaculdade.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
- 
-            var aluno = new Aluno
-            {
-                Nome    = dto.Nome,
-                Email   = dto.Email,
-                Curso   = dto.Curso,
-                Periodo = dto.Periodo
-            };
- 
-            await _repository.AddAsync(aluno);
- 
-            return CreatedAtAction(nameof(GetById), new { id = aluno.Id }, aluno);
+
+            // O Controller só manda o DTO pro repositório trabalhar
+            var alunoSalvo = await _repository.AddAsync(dto);
+
+            // Retorna o 201 Created mostrando o aluno com todos os dados gerados (ID, Matrícula, etc)
+            return CreatedAtAction(nameof(GetById), new { id = alunoSalvo.Id }, alunoSalvo);
         }
  
         // PUT api/alunos/5
