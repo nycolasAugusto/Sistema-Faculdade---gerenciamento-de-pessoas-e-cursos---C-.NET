@@ -1,8 +1,3 @@
-// 
-// 1 curso 
-// ate 7 materias 
-// periodo que esta 
-//matricula
 using ApiFaculdade.Enums;
 
 namespace ApiFaculdade.Models

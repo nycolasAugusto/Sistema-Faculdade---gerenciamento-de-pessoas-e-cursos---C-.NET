@@ -14,7 +14,6 @@ namespace ApiFaculdade.Repository
             _context = context;
         }
  
-        // Gera matrícula no formato FUN + ano + id com 3 dígitos (ex: FUN2025001)
         private string GerarMatricula(int id, DateTime dataAdmissao) =>
             $"FUN{dataAdmissao.Year}{id:D3}";
  

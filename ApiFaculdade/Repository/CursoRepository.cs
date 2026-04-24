@@ -3,7 +3,7 @@ using ApiFaculdade.Data;
 using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Repository.interfaces;
 using ApiFaculdade.DTOS;
-
+//ok
 namespace ApiFaculdade.Repository{
 
     public class CursoRepository : ICursoRepository{

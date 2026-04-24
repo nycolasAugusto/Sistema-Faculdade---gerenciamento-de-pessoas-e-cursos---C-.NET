@@ -1,4 +1,5 @@
 
+//ok
 
 namespace ApiFaculdade.Models{
     public class Turma{

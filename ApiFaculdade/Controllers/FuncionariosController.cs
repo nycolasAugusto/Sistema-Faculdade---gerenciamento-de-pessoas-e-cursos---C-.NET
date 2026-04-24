@@ -16,14 +16,14 @@ namespace ApiFaculdade.Controllers
             _repository = repository;
         }
  
-        // GET api/funcionarios
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetAll()
         {
             return Ok(await _repository.GetAllAsync());
         }
  
-        // GET api/funcionarios/5
+
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Funcionario>> GetById(int id)
         {
@@ -34,7 +34,7 @@ namespace ApiFaculdade.Controllers
             return Ok(funcionario);
         }
  
-        // GET api/funcionarios/matricula/FUN2025001
+       
         [HttpGet("matricula/{matricula}")]
         public async Task<ActionResult<Funcionario>> GetByMatricula(string matricula)
         {
@@ -45,23 +45,19 @@ namespace ApiFaculdade.Controllers
             return Ok(funcionario);
         }
  
-        // GET api/funcionarios/cargo/Professor
+      
         [HttpGet("cargo/{cargo}")]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetByCargo(CargoFuncionario cargo)
         {
             return Ok(await _repository.GetByCargoAsync(cargo));
         }
- 
-        // GET api/funcionarios/departamento/Computacao
+
         [HttpGet("departamento/{departamento}")]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetByDepartamento(string departamento)
         {
             return Ok(await _repository.GetByDepartamentoAsync(departamento));
         }
  
-        // POST api/funcionarios
-        // Body: { "nome": "...", "email": "...", "cargo": 0, "departamento": "..." }
-        // Id, Matricula e DataAdmissao são gerados automaticamente — não enviar no body.
         [HttpPost]
         public async Task<ActionResult<Funcionario>> Create([FromBody] CriarFuncionarioDto dto)
         {
@@ -81,7 +77,7 @@ namespace ApiFaculdade.Controllers
             return CreatedAtAction(nameof(GetById), new { id = funcionario.Id }, funcionario);
         }
  
-        // PUT api/funcionarios/5
+      
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] Funcionario funcionario)
         {
@@ -95,7 +91,7 @@ namespace ApiFaculdade.Controllers
             return NoContent();
         }
  
-        // DELETE api/funcionarios/5
+        
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

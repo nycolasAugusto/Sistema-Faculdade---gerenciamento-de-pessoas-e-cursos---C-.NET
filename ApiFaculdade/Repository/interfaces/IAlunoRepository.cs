@@ -1,7 +1,7 @@
 using ApiFaculdade.Models;
 using ApiFaculdade.DTOS;
 using ApiFaculdade.Enums;
-
+//ok
 namespace ApiFaculdade.Repository.interfaces
 {
     public interface IAlunoRepository

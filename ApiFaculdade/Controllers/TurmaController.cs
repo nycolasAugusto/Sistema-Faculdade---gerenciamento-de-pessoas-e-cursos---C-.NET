@@ -12,13 +12,13 @@ namespace ApiFaculdade.Controllers
     {
         private readonly ITurmaRepository _turmaRepository;
 
-        // Injeção de dependência do Repositório que criamos no passo anterior
+     
         public TurmaController(ITurmaRepository turmaRepository)
         {
             _turmaRepository = turmaRepository;
         }
 
-        // GET: api/turmas
+    
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Turma>>> GetTurmas()
         {
@@ -26,7 +26,6 @@ namespace ApiFaculdade.Controllers
             return Ok(turmas);
         }
 
-        // GET: api/turmas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Turma>> GetTurma(int id)
         {
@@ -39,7 +38,7 @@ namespace ApiFaculdade.Controllers
 
             return Ok(turma);
         }
-        // POST: api/turmas/5/adicionar-curso/2
+
         [HttpPost("{turmaId}/adicionar-curso/{cursoId}")]
         public async Task<ActionResult<Turma>> AdicionarAlunosDoCurso(int turmaId, int cursoId)
         {
@@ -52,7 +51,7 @@ namespace ApiFaculdade.Controllers
 
             return Ok(turmaAtualizada);
         }
-        // POST: api/turmas
+
         [HttpPost]
         public async Task<ActionResult<Turma>> PostTurma(CriarTurmaDto dto)
         {
@@ -61,7 +60,6 @@ namespace ApiFaculdade.Controllers
             return CreatedAtAction(nameof(GetTurma), new { id = turmaSalva.Id }, turmaSalva);
         }
 
-        // PUT: api/turmas/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTurma(int id, Turma turma)
         {
@@ -80,7 +78,6 @@ namespace ApiFaculdade.Controllers
             return Ok(turmaAtualizada);
         }
 
-        // DELETE: api/turmas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTurma(int id)
         {
@@ -91,7 +88,7 @@ namespace ApiFaculdade.Controllers
                 return NotFound(new { mensagem = $"Turma com ID {id} não encontrada." });
             }
 
-            return NoContent(); // 204 No Content - Padrão correto para deleção com sucesso
+            return NoContent(); 
         }
     }
 }

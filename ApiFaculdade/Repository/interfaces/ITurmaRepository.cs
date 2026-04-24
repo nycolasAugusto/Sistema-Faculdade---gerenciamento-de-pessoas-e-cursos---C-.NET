@@ -1,6 +1,8 @@
 using ApiFaculdade.Models;
 using ApiFaculdade.DTOS; 
 
+
+//ok
 namespace ApiFaculdade.Repository.interfaces
 {
     public interface ITurmaRepository

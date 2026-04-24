@@ -1,5 +1,5 @@
 using ApiFaculdade.Models;
- 
+ //ok
 namespace ApiFaculdade.Repository.interfaces
 {
     public interface IFuncionarioRepository

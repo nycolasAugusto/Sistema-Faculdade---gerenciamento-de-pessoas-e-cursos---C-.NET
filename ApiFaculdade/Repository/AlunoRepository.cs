@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Repository.interfaces;
 using ApiFaculdade.DTOS; 
 using ApiFaculdade.Enums;
-
+//ok
 namespace ApiFaculdade.Repository
 {
     public class AlunoRepository : IAlunoRepository

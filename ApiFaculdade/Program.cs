@@ -25,7 +25,6 @@ app.MapControllers();
 //mapear controllers no app
 
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

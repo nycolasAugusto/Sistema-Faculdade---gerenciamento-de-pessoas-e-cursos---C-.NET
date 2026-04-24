@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-
+//ok
 namespace ApiFaculdade.Models
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]

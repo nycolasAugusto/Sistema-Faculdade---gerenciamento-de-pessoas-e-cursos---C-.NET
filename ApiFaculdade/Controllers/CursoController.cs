@@ -15,7 +15,7 @@ namespace ApiFaculdade.Controllers;
 
         private readonly ICursoRepository _repository;
 
-        // Injeção de dependência do Repositório
+      
         public CursoController(ICursoRepository repository) {
             _repository = repository;
         }
