@@ -15,22 +15,26 @@ namespace ApiFaculdade.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Turma>> BuscarTodasAsync()
+        public async Task<TurmaRespostaDto?> BuscarPorIdAsync(int id)
         {
             return await _context.Turmas
-                .Include(t => t.Professor)
-                .Include(t => t.Cursos)
-                .Include(t => t.Alunos)
-                .ToListAsync();
-        }
-
-        public async Task<Turma?> BuscarPorIdAsync(int id)
-        {
-            return await _context.Turmas
-                .Include(t => t.Professor)
-                .Include(t => t.Cursos)
-                .Include(t => t.Alunos)
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .Where(t => t.Id == id)
+                .Select(t => new TurmaRespostaDto
+                {
+                    Id = t.Id,
+                    Nome = t.Nome,
+                    ProfessorNome = t.Professor != null ? t.Professor.Nome : "Sem professor",
+                    
+                    NomesDosCursos = t.Cursos.Select(c => c.NomeCursoEnum.ToString()).ToList(),
+                    
+                    Alunos = t.Alunos.Select(a => new AlunoSimplesDto
+                    {
+                        Id = a.Id,
+                        Nome = a.Nome,
+                        Matricula = a.Matricula
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
         }
         public async Task<Turma?> AdicionarAlunosDeUmCursoAsync(int turmaId, int cursoId)
         {
@@ -87,7 +91,7 @@ namespace ApiFaculdade.Repository
                     
                 novaTurma.Cursos = cursosReais;
 
-                !
+                
                 var alunosDaTurma = await _context.Alunos
                     .Where(a => dto.CursosIds.Contains(a.CursoId)) 
                     .ToListAsync();
@@ -140,6 +144,27 @@ namespace ApiFaculdade.Repository
             _context.Turmas.Remove(turmaExistente);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<IEnumerable<TurmaRespostaDto>> BuscarTodasComDetalhesAsync()
+        {
+    
+            return await _context.Turmas
+                .Select(t => new TurmaRespostaDto
+                {
+                    Id = t.Id,
+                    Nome = t.Nome,
+                    ProfessorNome = t.Professor != null ? t.Professor.Nome : "Sem professor",
+                    
+                    NomesDosCursos = t.Cursos.Select(c => c.NomeCursoEnum.ToString()).ToList(),
+                    
+                    Alunos = t.Alunos.Select(a => new AlunoSimplesDto
+                    {
+                        Id = a.Id,
+                        Nome = a.Nome,
+                        Matricula = a.Matricula
+                    }).ToList()
+                })
+                .ToListAsync(); 
         }
     }
 }

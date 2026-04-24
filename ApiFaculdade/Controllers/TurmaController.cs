@@ -20,9 +20,10 @@ namespace ApiFaculdade.Controllers
 
     
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Turma>>> GetTurmas()
+        public async Task<ActionResult<IEnumerable<TurmaRespostaDto>>> GetAll()
         {
-            var turmas = await _turmaRepository.BuscarTodasAsync();
+            var turmas = await _turmaRepository.BuscarTodasComDetalhesAsync();
+            
             return Ok(turmas);
         }
 
