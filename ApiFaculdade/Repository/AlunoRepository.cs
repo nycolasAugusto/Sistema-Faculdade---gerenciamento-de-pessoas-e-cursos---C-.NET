@@ -2,9 +2,10 @@ using ApiFaculdade.Models;
 using ApiFaculdade.Data; 
 using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Repository.interfaces;
-using ApiFaculdade.DTOS; 
+using ApiFaculdade.DTOS;
+
 using ApiFaculdade.Enums;
-//ok
+
 namespace ApiFaculdade.Repository
 {
     public class AlunoRepository : IAlunoRepository
@@ -16,31 +17,96 @@ namespace ApiFaculdade.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<Aluno>> GetAllAsync()
-        {
-            return await _context.Alunos.ToListAsync();
-        }
-
-        public async Task<Aluno?> GetByIdAsync(int id)
-        {
-            return await _context.Alunos.FirstOrDefaultAsync(a => a.Id == id);
-        }
-
-        public async Task<Aluno?> GetByMatriculaAsync(string matricula)
-        {
-            return await _context.Alunos.FirstOrDefaultAsync(a => a.Matricula == matricula);
-        }
-
-        public async Task<IEnumerable<Aluno>> GetByCursoAsync(Cursos curso)
+        public async Task<IEnumerable<AlunoRespostaDto>> GetAllAsync()
         {
             return await _context.Alunos
-                .Include(a => a.curso) 
+                .Select(a => new AlunoRespostaDto
+                {
+                    Id = a.Id,
+                    Nome = a.Nome,
+                    Matricula = a.Matricula,
+                    Email = a.Email,
+                    Periodo = a.Periodo,
+                    Ativo = a.Ativo ?? false,
+                   
+                    NomeCurso = a.curso != null ? a.curso.NomeCursoEnum.ToString() : "Sem Curso",
+                    NomesDasTurmas = a.turmas != null ? a.turmas.Select(t => t.Nome).ToList() : new List<string>()
+                })
+                .ToListAsync();
+        }
+
+        public async Task<AlunoRespostaDto?> GetByIdAsync(int id)
+        {
+            return await _context.Alunos
+                .Where(a => a.Id == id)
+                .Select(a => new AlunoRespostaDto
+                {
+                    Id = a.Id,
+                    Nome = a.Nome,
+                    Matricula = a.Matricula,
+                    Email = a.Email,
+                    Periodo = a.Periodo,
+                    Ativo = a.Ativo ?? false,
+                    NomeCurso = a.curso != null ? a.curso.NomeCursoEnum.ToString() : "Sem Curso",
+                    NomesDasTurmas = a.turmas != null ? a.turmas.Select(t => t.Nome).ToList() : new List<string>()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<AlunoRespostaDto?> GetByMatriculaAsync(string matricula)
+        {
+            return await _context.Alunos
+                .Where(a => a.Matricula == matricula)
+                .Select(a => new AlunoRespostaDto
+                {
+                    Id = a.Id,
+                    Nome = a.Nome,
+                    Matricula = a.Matricula,
+                    Email = a.Email,
+                    Periodo = a.Periodo,
+                    Ativo = a.Ativo ?? false,
+                    NomeCurso = a.curso != null ? a.curso.NomeCursoEnum.ToString() : "Sem Curso",
+                    NomesDasTurmas = a.turmas != null ? a.turmas.Select(t => t.Nome).ToList() : new List<string>()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<AlunoRespostaDto>> GetByCursoAsync(Cursos curso)
+        {
+            return await _context.Alunos
                 .Where(a => a.curso != null && a.curso.NomeCursoEnum == curso)
+                .Select(a => new AlunoRespostaDto
+                {
+                    Id = a.Id,
+                    Nome = a.Nome,
+                    Matricula = a.Matricula,
+                    Email = a.Email,
+                    Periodo = a.Periodo,
+                    Ativo = a.Ativo ?? false,
+                    NomeCurso = a.curso != null ? a.curso.NomeCursoEnum.ToString() : "Sem Curso",
+                    NomesDasTurmas = a.turmas != null ? a.turmas.Select(t => t.Nome).ToList() : new List<string>()
+                })
                 .ToListAsync();
         }
 
         public async Task<Aluno> AddAsync(CriarAlunoDto dto)
         {
+        
+            var curso = await _context.Cursos
+                .Include(c => c.Alunos) 
+                .FirstOrDefaultAsync(c => c.Id == dto.CursoId);
+
+            if (curso == null)
+            {
+                throw new Exception($"Não foi possível matricular: O curso com ID {dto.CursoId} não existe no sistema.");
+            }
+
+            
+            if (curso.Alunos != null && curso.Alunos.Count >= 10)
+            {
+                throw new Exception($"Não foi possível matricular: O curso '{curso.NomeCursoEnum}' já atingiu o limite máximo de 10 alunos.");
+            }
+
             string anoAtual = DateTime.Now.Year.ToString();
             string numeroAleatorio = new Random().Next(1000, 9999).ToString();
             string matriculaGerada = $"ALU{anoAtual}{numeroAleatorio}";
@@ -51,7 +117,6 @@ namespace ApiFaculdade.Repository
                 Email = dto.Email,
                 CursoId = dto.CursoId,
                 Periodo = dto.Periodo,
-                
                 Matricula = matriculaGerada,
                 DataMatricula = DateTime.Now,
                 Ativo = true 
@@ -62,7 +127,6 @@ namespace ApiFaculdade.Repository
             
             return novoAluno;
         }
-
         public async Task UpdateAsync(Aluno aluno)
         {
             _context.Alunos.Update(aluno);
@@ -71,7 +135,7 @@ namespace ApiFaculdade.Repository
 
         public async Task DeleteAsync(int id)
         {
-            var aluno = await GetByIdAsync(id);
+            var aluno = await _context.Alunos.FindAsync(id);
             if (aluno != null) 
             {
                 _context.Alunos.Remove(aluno);

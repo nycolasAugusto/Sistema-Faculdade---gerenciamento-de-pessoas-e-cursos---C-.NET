@@ -52,16 +52,23 @@ namespace ApiFaculdade.Controllers
         }
  
         
-        [HttpPost]
-        public async Task<ActionResult<Aluno>> Create([FromBody] CriarAlunoDto dto)
+       [HttpPost]
+        public async Task<ActionResult<AlunoRespostaDto>> Create([FromBody] CriarAlunoDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var alunoSalvo = await _repository.AddAsync(dto);
-
-        
-            return CreatedAtAction(nameof(GetById), new { id = alunoSalvo.Id }, alunoSalvo);
+            try 
+            {
+          
+                var alunoSalvo = await _repository.AddAsync(dto);
+                var alunoSeguro = await _repository.GetByIdAsync(alunoSalvo.Id);
+                return CreatedAtAction(nameof(GetById), new { id = alunoSalvo.Id }, alunoSeguro);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
  
         // PUT api/alunos/5

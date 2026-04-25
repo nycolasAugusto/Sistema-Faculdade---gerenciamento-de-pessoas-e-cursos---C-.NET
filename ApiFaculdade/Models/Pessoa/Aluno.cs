@@ -13,7 +13,7 @@ namespace ApiFaculdade.Models
         public Curso? curso {get; set;}
         public int Periodo { get; set; }
         public DateTime DataMatricula { get; set; }
-        public List<Turma> turmas {get ; set;}
-        public bool Ativo { get; set; } = true;
+        public List<Turma>? turmas {get ; set;}
+        public bool? Ativo { get; set; } = true;
     }
 }
