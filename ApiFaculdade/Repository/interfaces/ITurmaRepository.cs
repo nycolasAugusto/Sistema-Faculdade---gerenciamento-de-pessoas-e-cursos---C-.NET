@@ -9,7 +9,7 @@ namespace ApiFaculdade.Repository.interfaces
     {
         Task<TurmaRespostaDto?> BuscarPorIdAsync(int id);
         Task<Turma?> AdicionarAlunosDeUmCursoAsync(int turmaId, int cursoId);
-        
+        Task AtivarTurmaAsync(int turmaId);
         Task<Turma> AdicionarAsync(CriarTurmaDto dto); 
         
         Task<Turma?> AtualizarAsync(Turma turma);

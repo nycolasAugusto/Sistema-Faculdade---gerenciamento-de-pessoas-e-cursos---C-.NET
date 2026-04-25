@@ -26,6 +26,19 @@ namespace ApiFaculdade.Controllers
             
             return Ok(turmas);
         }
+        [HttpPatch("{id}/ativar")]
+        public async Task<IActionResult> Ativar(int id)
+        {
+            try
+            {
+                await _turmaRepository.AtivarTurmaAsync(id);
+                return Ok(new { message = "Turma iniciada com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Turma>> GetTurma(int id)

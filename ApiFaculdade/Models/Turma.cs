@@ -16,7 +16,7 @@ namespace ApiFaculdade.Models{
         
         public List<Curso> Cursos { get; set; } = new List<Curso>();
 
-         
+        public bool EmAndamento { get; set; } = false;
 
     }
 }

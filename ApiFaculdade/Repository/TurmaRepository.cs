@@ -166,5 +166,26 @@ namespace ApiFaculdade.Repository
                 })
                 .ToListAsync(); 
         }
+
+        public async Task AtivarTurmaAsync(int turmaId)
+        {
+            var turma = await _context.Turmas
+                .Include(t => t.Alunos)
+                .FirstOrDefaultAsync(t => t.Id == turmaId);
+
+            if (turma == null)
+                throw new Exception("Turma não encontrada.");
+
+          
+            if (turma.Alunos == null || turma.Alunos.Count < 5)
+            {
+                throw new Exception($"Não é possível iniciar a turma. Ela possui apenas {turma.Alunos?.Count ?? 0} alunos, mas o mínimo exigido é 5.");
+            }
+
+            turma.EmAndamento = true;
+            await _context.SaveChangesAsync();
+        }
+
+        
     }
 }
