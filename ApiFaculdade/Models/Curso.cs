@@ -17,6 +17,6 @@ namespace ApiFaculdade.Models{
         public List<Aluno>? Alunos { get; set; } = new List<Aluno>();
         
         public List<Funcionario> Coordenador { get; set; } = new List<Funcionario>();
-        public List<MateriasEnum> Materias { get; set; } = new List<MateriasEnum>();
+        
     }
 }

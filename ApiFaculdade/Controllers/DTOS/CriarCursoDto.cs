@@ -20,6 +20,5 @@ namespace ApiFaculdade.DTOS
         [Required]
         public List<int> CoordenadorIds { get; set; } = new List<int>();
 
-        public List<MateriasEnum> Materias { get; set; } = new List<MateriasEnum>();
     }
 }

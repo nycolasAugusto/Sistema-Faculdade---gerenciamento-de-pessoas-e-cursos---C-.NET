@@ -34,7 +34,7 @@ namespace ApiFaculdade.Repository{
                 DataInicio = dto.DataInicio,
                 DataFim = dto.DataFim,
                 Campus = dto.Campus,
-                Materias = dto.Materias
+               
 
             };
             if (dto.CoordenadorIds != null && dto.CoordenadorIds.Any())
