@@ -67,11 +67,12 @@ namespace ApiFaculdade.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Turma>> PostTurma(CriarTurmaDto dto)
+        public async Task<ActionResult<TurmaRespostaDto>> PostTurma(CriarTurmaDto dto)
         {
            
             var turmaSalva = await _turmaRepository.AdicionarAsync(dto);
-            return CreatedAtAction(nameof(GetTurma), new { id = turmaSalva.Id }, turmaSalva);
+            TurmaRespostaDto turmaResposta = await _turmaRepository.BuscarPorIdAsync(turmaSalva.Id);
+            return CreatedAtAction(nameof(GetTurma), new { id = turmaResposta.Id }, turmaResposta);
         }
 
         [HttpPut("{id}")]

@@ -3,8 +3,11 @@ using ApiFaculdade.Data;
 using Microsoft.EntityFrameworkCore;
 using ApiFaculdade.Repository.interfaces;
 using ApiFaculdade.DTOS;
-
 using ApiFaculdade.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ApiFaculdade.Repository
 {
@@ -28,7 +31,6 @@ namespace ApiFaculdade.Repository
                     Email = a.Email,
                     Periodo = a.Periodo,
                     Ativo = a.Ativo ?? false,
-                   
                     NomeCurso = a.curso != null ? a.curso.NomeCursoEnum.ToString() : "Sem Curso",
                     NomesDasTurmas = a.turmas != null ? a.turmas.Select(t => t.Nome).ToList() : new List<string>()
                 })
@@ -91,8 +93,7 @@ namespace ApiFaculdade.Repository
 
         public async Task<Aluno> AddAsync(CriarAlunoDto dto)
         {
-        
-            var curso = await _context.Cursos
+            Curso? curso = await _context.Cursos
                 .Include(c => c.Alunos) 
                 .FirstOrDefaultAsync(c => c.Id == dto.CursoId);
 
@@ -106,6 +107,7 @@ namespace ApiFaculdade.Repository
             {
                 throw new Exception($"Não foi possível matricular: O e-mail '{dto.Email}' já está em uso por outro aluno no sistema.");
             }
+
             if (curso.Alunos != null && curso.Alunos.Count >= 10)
             {
                 throw new Exception($"Não foi possível matricular: O curso '{curso.NomeCursoEnum}' já atingiu o limite máximo de 10 alunos.");
@@ -115,7 +117,7 @@ namespace ApiFaculdade.Repository
             string numeroAleatorio = new Random().Next(1000, 9999).ToString();
             string matriculaGerada = $"ALU{anoAtual}{numeroAleatorio}";
 
-            var novoAluno = new Aluno
+            Aluno novoAluno = new Aluno
             {
                 Nome = dto.Nome,
                 Email = dto.Email,
@@ -131,17 +133,47 @@ namespace ApiFaculdade.Repository
             
             return novoAluno;
         }
-        public async Task UpdateAsync(Aluno aluno)
+
+        public async Task UpdateAsync(Aluno alunoAtualizado)
         {
-            _context.Alunos.Update(aluno);
+            Aluno? alunoOriginal = await _context.Alunos.FindAsync(alunoAtualizado.Id);
+            
+            if (alunoOriginal == null)
+            {
+                throw new Exception("Aluno não encontrado para atualização.");
+            }
+
+            bool emailEmUso = await _context.Alunos
+                .AnyAsync(a => a.Email == alunoAtualizado.Email && a.Id != alunoAtualizado.Id);
+                
+            if (emailEmUso)
+            {
+                throw new Exception($"O e-mail '{alunoAtualizado.Email}' já está sendo usado por outro aluno.");
+            }
+
+            alunoOriginal.Nome = alunoAtualizado.Nome;
+            alunoOriginal.Email = alunoAtualizado.Email;
+            alunoOriginal.CursoId = alunoAtualizado.CursoId;
+            alunoOriginal.Periodo = alunoAtualizado.Periodo;
+            alunoOriginal.Ativo = alunoAtualizado.Ativo;
+
+            _context.Alunos.Update(alunoOriginal);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var aluno = await _context.Alunos.FindAsync(id);
+            Aluno? aluno = await _context.Alunos
+                .Include(a => a.turmas)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (aluno != null) 
             {
+                if (aluno.turmas != null && aluno.turmas.Any())
+                {
+                    throw new Exception("Não é possível excluir o aluno pois ele possui histórico de turmas vinculadas. Em vez de excluir, inative-o.");
+                }
+
                 _context.Alunos.Remove(aluno);
                 await _context.SaveChangesAsync();
             }

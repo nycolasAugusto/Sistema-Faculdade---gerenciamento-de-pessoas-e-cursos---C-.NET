@@ -40,10 +40,23 @@ namespace ApiFaculdade.Controllers;
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Curso curso) {
-            if (id != curso.Id) return BadRequest();
-            await _repository.UpdateAsync(curso);
-            return NoContent();
+        public async Task<IActionResult> Put(int id, [FromBody] Curso curso)
+        {
+          
+            if (id != curso.Id)
+            {
+                return BadRequest(new { message = "O ID da URL deve ser igual ao ID do corpo da requisição." });
+            }
+
+            try
+            {            
+                await _repository.UpdateAsync(curso);
+                return Ok(new { message = "Curso atualizado com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
