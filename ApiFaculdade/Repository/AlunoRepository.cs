@@ -101,7 +101,11 @@ namespace ApiFaculdade.Repository
                 throw new Exception($"Não foi possível matricular: O curso com ID {dto.CursoId} não existe no sistema.");
             }
 
-            
+            bool emailExiste = await _context.Alunos.AnyAsync(a => a.Email == dto.Email);
+            if (emailExiste)
+            {
+                throw new Exception($"Não foi possível matricular: O e-mail '{dto.Email}' já está em uso por outro aluno no sistema.");
+            }
             if (curso.Alunos != null && curso.Alunos.Count >= 10)
             {
                 throw new Exception($"Não foi possível matricular: O curso '{curso.NomeCursoEnum}' já atingiu o limite máximo de 10 alunos.");
