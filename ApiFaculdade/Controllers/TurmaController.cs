@@ -71,7 +71,8 @@ namespace ApiFaculdade.Controllers
         {
            
             var turmaSalva = await _turmaRepository.AdicionarAsync(dto);
-            TurmaRespostaDto turmaResposta = await _turmaRepository.BuscarPorIdAsync(turmaSalva'.Id);
+            TurmaRespostaDto turmaResposta = await _turmaRepository.BuscarPorIdAsync
+            (turmaSalva.Id);
             return CreatedAtAction(nameof(GetTurma), new { id = turmaResposta.Id }, turmaResposta);
         }
 
