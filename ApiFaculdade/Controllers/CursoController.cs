@@ -20,12 +20,24 @@ namespace ApiFaculdade.Controllers;
             _repository = repository;
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Curso>> GetCurso(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CursoRespostaDto>> GetById(int id)
         {
-            var curso = await _repository.GetByIdAsync(id);
-            if (curso == null) return NotFound();
-            return Ok(curso);
+            try
+            {
+                CursoRespostaDto? curso = await _repository.GetByIdAsync(id);
+
+                if (curso == null)
+                {
+                    return NotFound(new { message = $"Curso com Id {id} não encontrado." });
+                }
+
+                return Ok(curso);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         
@@ -36,7 +48,7 @@ namespace ApiFaculdade.Controllers;
             
             var cursoSalvo = await _repository.AdicionarAsync(dto);
 
-            return CreatedAtAction(nameof(GetCurso), new { id = cursoSalvo.Id }, cursoSalvo);
+            return CreatedAtAction(nameof(GetById), new { id = cursoSalvo.Id }, cursoSalvo);
         }
 
         [HttpPut("{id}")]

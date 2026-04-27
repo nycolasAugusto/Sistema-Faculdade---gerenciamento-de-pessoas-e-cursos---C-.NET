@@ -39,18 +39,25 @@ namespace ApiFaculdade.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Turma>> GetTurma(int id)
+        
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<TurmaRespostaDto>> GetById(int id)
         {
-            var turma = await _turmaRepository.BuscarPorIdAsync(id);
-
-            if (turma == null)
+            try
             {
-                return NotFound(new { mensagem = $"Turma com ID {id} não encontrada." });
-            }
+                TurmaRespostaDto? turma = await _turmaRepository.GetByIdAsync(id);
 
-            return Ok(turma);
+                if (turma == null)
+                {
+                    return NotFound(new { message = $"Turma com Id {id} não encontrada." });
+                }
+
+                return Ok(turma);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("{turmaId}/adicionar-curso/{cursoId}")]
@@ -71,27 +78,28 @@ namespace ApiFaculdade.Controllers
         {
            
             var turmaSalva = await _turmaRepository.AdicionarAsync(dto);
-            TurmaRespostaDto turmaResposta = await _turmaRepository.BuscarPorIdAsync
+            TurmaRespostaDto turmaResposta = await _turmaRepository.GetByIdAsync
             (turmaSalva.Id);
-            return CreatedAtAction(nameof(GetTurma), new { id = turmaResposta.Id }, turmaResposta);
+            return CreatedAtAction(nameof(GetById), new { id = turmaResposta.Id }, turmaResposta);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTurma(int id, Turma turma)
+       [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, [FromBody] AtualizarTurmaDto dto)
         {
-            if (id != turma.Id)
+            if (id != dto.Id)
             {
-                return BadRequest(new { mensagem = "O ID da URL não bate com o ID do corpo da requisição." });
+                return BadRequest(new { message = "O ID da rota deve ser igual ao ID do corpo da requisição." });
             }
 
-            var turmaAtualizada = await _turmaRepository.AtualizarAsync(turma);
-
-            if (turmaAtualizada == null)
+            try
             {
-                return NotFound(new { mensagem = $"Turma com ID {id} não encontrada." });
+                await _turmaRepository.UpdateAsync(id, dto);
+                return Ok(new { message = "Turma atualizada com sucesso!" });
             }
-
-            return Ok(turmaAtualizada);
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]

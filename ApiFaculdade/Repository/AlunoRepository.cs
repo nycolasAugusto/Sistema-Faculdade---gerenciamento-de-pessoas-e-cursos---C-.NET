@@ -134,30 +134,57 @@ namespace ApiFaculdade.Repository
             return novoAluno;
         }
 
-        public async Task UpdateAsync(Aluno alunoAtualizado)
+        public async Task UpdateAsync(int id, AtualizarAlunoDto dto)
         {
-            Aluno? alunoOriginal = await _context.Alunos.FindAsync(alunoAtualizado.Id);
-            
+            Aluno? alunoOriginal = await _context.Alunos
+                .Include(a => a.turmas)
+                    .ThenInclude(t => t.Cursos)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (alunoOriginal == null)
             {
-                throw new Exception("Aluno não encontrado para atualização.");
+                throw new Exception("Aluno não encontrado.");
             }
 
-            bool emailEmUso = await _context.Alunos
-                .AnyAsync(a => a.Email == alunoAtualizado.Email && a.Id != alunoAtualizado.Id);
-                
-            if (emailEmUso)
+            int cursoIdAntigo = alunoOriginal.CursoId;
+
+            if (cursoIdAntigo != dto.CursoId)
             {
-                throw new Exception($"O e-mail '{alunoAtualizado.Email}' já está sendo usado por outro aluno.");
+                bool possuiTurmaAtiva = alunoOriginal.turmas.Any(t => t.EmAndamento == true);
+                if (possuiTurmaAtiva)
+                {
+                    throw new Exception("Não é possível alterar o curso: o aluno possui turmas em andamento.");
+                }
+
+                List<Turma> turmasParaRemover = alunoOriginal.turmas
+                    .Where(t => t.Cursos.Any(c => c.Id == cursoIdAntigo))
+                    .ToList();
+
+                foreach (Turma turmaOld in turmasParaRemover)
+                {
+                    alunoOriginal.turmas.Remove(turmaOld);
+                }
+
+                alunoOriginal.CursoId = dto.CursoId;
+
+                List<Turma> turmasDoNovoCurso = await _context.Turmas
+                    .Where(t => t.Cursos.Any(c => c.Id == dto.CursoId) && t.EmAndamento == false)
+                    .ToListAsync();
+
+                foreach (Turma turmaNew in turmasDoNovoCurso)
+                {
+                    if (!turmaNew.Alunos.Any(a => a.Id == id) && turmaNew.Alunos.Count < 40)
+                    {
+                        turmaNew.Alunos.Add(alunoOriginal);
+                    }
+                }
             }
 
-            alunoOriginal.Nome = alunoAtualizado.Nome;
-            alunoOriginal.Email = alunoAtualizado.Email;
-            alunoOriginal.CursoId = alunoAtualizado.CursoId;
-            alunoOriginal.Periodo = alunoAtualizado.Periodo;
-            alunoOriginal.Ativo = alunoAtualizado.Ativo;
+            alunoOriginal.Nome = dto.Nome;
+            alunoOriginal.Email = dto.Email;
+            alunoOriginal.Periodo = dto.Periodo;
+            alunoOriginal.Ativo = dto.Ativo;
 
-            _context.Alunos.Update(alunoOriginal);
             await _context.SaveChangesAsync();
         }
 

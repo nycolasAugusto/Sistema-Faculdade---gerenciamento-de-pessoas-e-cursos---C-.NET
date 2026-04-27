@@ -10,7 +10,7 @@ namespace ApiFaculdade.Repository.interfaces
         
         Task<Aluno> AddAsync(CriarAlunoDto dto);
         
-        Task UpdateAsync(Aluno aluno);
+        Task UpdateAsync(int id, AtualizarAlunoDto dto);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
 

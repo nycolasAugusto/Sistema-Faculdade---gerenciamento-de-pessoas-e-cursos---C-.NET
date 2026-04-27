@@ -73,16 +73,31 @@ namespace ApiFaculdade.Controllers
  
         // PUT api/alunos/5
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Aluno aluno)
+        public async Task<IActionResult> Update(int id, [FromBody] AtualizarAlunoDto dto)
         {
-            if (id != aluno.Id)
-                return BadRequest(new { message = "Id da rota diferente do Id do corpo da requisição." });
- 
-            if (!await _repository.ExistsAsync(id))
-                return NotFound(new { message = $"Aluno com Id {id} não encontrado." });
- 
-            await _repository.UpdateAsync(aluno);
-            return NoContent();
+            
+            if (id != dto.Id)
+            {
+                return BadRequest(new { message = "O ID da URL deve ser igual ao ID do corpo da requisição." });
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                
+                await _repository.UpdateAsync(id, dto);
+                
+                return Ok(new { message = "Aluno atualizado com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                
+                return BadRequest(new { message = ex.Message });
+            }
         }
  
         // DELETE api/alunos/5

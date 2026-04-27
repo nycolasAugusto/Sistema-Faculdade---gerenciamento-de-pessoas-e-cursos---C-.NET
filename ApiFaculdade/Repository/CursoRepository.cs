@@ -25,9 +25,33 @@ namespace ApiFaculdade.Repository
             return await _context.Cursos.ToListAsync();
         }
 
-        public async Task<Curso?> GetByIdAsync(int id)
+        public async Task<CursoRespostaDto?> GetByIdAsync(int id)
         {
-            return await _context.Cursos.FirstOrDefaultAsync(c => c.Id == id);
+            
+            CursoRespostaDto? curso = await _context.Cursos
+                .Where(c => c.Id == id)
+                .Select(c => new CursoRespostaDto
+                {
+                    Id = c.Id,
+                    NomeCurso = c.NomeCursoEnum.ToString(),
+                    TempoEmMeses = c.TempoDoCursoEmMeses,
+                    DataInicio = c.DataInicio,
+                    DataFim = c.DataFim,
+                    Campus = c.Campus,
+
+                    
+                    NomesAlunos = c.Alunos.Select(a => a.Nome).ToList(),
+
+                    Coordenadores = c.Coordenador.Select(coord => new CoordenadorResumidoDto
+                    {
+                        Id = coord.Id,
+                        Nome = coord.Nome,
+                        Email = coord.Email
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return curso;
         }
 
         public async Task<Curso> AdicionarAsync(CriarCursoDto dto)

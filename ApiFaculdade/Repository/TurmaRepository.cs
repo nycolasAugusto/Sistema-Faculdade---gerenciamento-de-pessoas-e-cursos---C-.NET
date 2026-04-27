@@ -20,9 +20,9 @@ namespace ApiFaculdade.Repository
             _context = context;
         }
 
-        public async Task<TurmaRespostaDto?> BuscarPorIdAsync(int id)
+        public async Task<TurmaRespostaDto?> GetByIdAsync(int id)
         {
-            return await _context.Turmas
+            TurmaRespostaDto? turma = await _context.Turmas
                 .Where(t => t.Id == id)
                 .Select(t => new TurmaRespostaDto
                 {
@@ -30,6 +30,7 @@ namespace ApiFaculdade.Repository
                     Nome = t.Nome,
                     ProfessorNome = t.Professor != null ? t.Professor.Nome : "Sem professor",
                     NomesDosCursos = t.Cursos.Select(c => c.NomeCursoEnum.ToString()).ToList(),
+                    
                     Alunos = t.Alunos.Select(a => new AlunoSimplesDto
                     {
                         Id = a.Id,
@@ -38,6 +39,8 @@ namespace ApiFaculdade.Repository
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
+
+            return turma;
         }
 
         public async Task<Turma?> AdicionarAlunosDeUmCursoAsync(int turmaId, int cursoId)
@@ -133,51 +136,40 @@ namespace ApiFaculdade.Repository
             return novaTurma;
         }
 
-        public async Task<Turma?> AtualizarAsync(Turma turma)
+        public async Task UpdateAsync(int id, AtualizarTurmaDto dto)
         {
-            Turma? turmaExistente = await _context.Turmas
+           
+            Turma? turmaOriginal = await _context.Turmas
                 .Include(t => t.Cursos)
-                .Include(t => t.Alunos)
-                .FirstOrDefaultAsync(t => t.Id == turma.Id);
+                .FirstOrDefaultAsync(t => t.Id == id);
 
-            if (turmaExistente == null)
+            if (turmaOriginal == null)
             {
-                throw new Exception("Turma não encontrada para atualização.");
+                throw new Exception("Turma não encontrada.");
             }
 
-            if (turma.DataInicio >= turma.DataFim)
+            Funcionario? professor = await _context.Funcionarios.FindAsync(dto.ProfessorId);
+            if (professor == null || professor.Cargo != CargoFuncionario.Professor)
             {
-                throw new Exception("A data de término não pode ser anterior ou igual à data de início.");
+                throw new Exception("Professor inválido ou não encontrado.");
             }
 
-            turmaExistente.Nome = turma.Nome;
-            turmaExistente.DataInicio = turma.DataInicio;
-            turmaExistente.DataFim = turma.DataFim;
-            turmaExistente.ProfessorId = turma.ProfessorId;
+            turmaOriginal.Nome = dto.Nome;
+            turmaOriginal.ProfessorId = dto.ProfessorId;
+            turmaOriginal.EmAndamento = dto.EmAndamento;
 
-            if (turma.Cursos != null)
+            turmaOriginal.Cursos.Clear();
+
+            List<Curso> novosCursos = await _context.Cursos
+                .Where(c => dto.CursosIds.Contains(c.Id))
+                .ToListAsync();
+
+            foreach (Curso curso in novosCursos)
             {
-                turmaExistente.Cursos.Clear();
-                List<int> idsCursos = turma.Cursos.Select(c => c.Id).ToList();
-                turmaExistente.Cursos = await _context.Cursos.Where(c => idsCursos.Contains(c.Id)).ToListAsync();
-            }
-
-            if (turma.Alunos != null)
-            {
-                turmaExistente.Alunos.Clear();
-                List<int> idsAlunos = turma.Alunos.Select(a => a.Id).ToList();
-                List<Aluno> novosAlunos = await _context.Alunos.Where(a => idsAlunos.Contains(a.Id)).ToListAsync();
-                
-                if (novosAlunos.Count > 40)
-                {
-                    throw new Exception("A turma não pode ser atualizada pois a nova lista excede 40 alunos.");
-                }
-
-                turmaExistente.Alunos = novosAlunos;
+                turmaOriginal.Cursos.Add(curso);
             }
 
             await _context.SaveChangesAsync();
-            return turmaExistente;
         }
 
         public async Task<bool> DeletarAsync(int id)
