@@ -74,15 +74,30 @@ namespace ApiFaculdade.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+       public async Task DeleteAsync(int id)
         {
+           
             Funcionario? funcionario = await GetByIdAsync(id);
-            
-            if (funcionario != null)
+
+            if (funcionario == null)
             {
-                _context.Funcionarios.Remove(funcionario);
-                await _context.SaveChangesAsync();
+                throw new Exception("Funcionário não encontrado.");
             }
+
+           
+            if (funcionario.Cargo == CargoFuncionario.Professor)
+            {
+                bool temTurmaVinculada = await _context.Turmas.AnyAsync(t => t.ProfessorId == id);
+                
+                if (temTurmaVinculada)
+                {
+                    throw new Exception("Não é possível deletar este professor pois ele está atrelado a uma ou mais turmas.");
+                }
+            }
+
+          
+            _context.Funcionarios.Remove(funcionario);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> ExistsAsync(int id)
