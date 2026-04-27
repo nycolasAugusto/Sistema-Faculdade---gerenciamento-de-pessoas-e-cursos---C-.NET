@@ -9,5 +9,6 @@ namespace ApiFaculdade.Repository.interfaces
         Task<Curso> AdicionarAsync(CriarCursoDto dto); 
         Task UpdateAsync(Curso curso);
         Task DeleteAsync(int id);
+        Task AlterarCoordenadores(int id, List<int> idsEnviados);
     }
 }

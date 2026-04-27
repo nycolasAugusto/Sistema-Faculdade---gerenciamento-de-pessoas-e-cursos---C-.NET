@@ -59,6 +59,21 @@ namespace ApiFaculdade.Controllers;
             }
         }
 
+        //adicionar ou alterar coord de 1 curso sem mandar o JSON DO CURSO TODO ...
+        [HttpPut("coordenador/{id}")]
+        public async Task<IActionResult> AdicionarCoordenador(int id, [FromBody] IdsCoordenadores dto)
+        {
+            try
+            {
+                await _repository.AlterarCoordenadores(id, dto.CoordenadorIds);
+                return Ok(new { message = "Coordenadores atualizados com sucesso!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id) {
             await _repository.DeleteAsync(id);

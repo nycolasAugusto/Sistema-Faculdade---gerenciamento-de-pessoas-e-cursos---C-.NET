@@ -65,7 +65,38 @@ namespace ApiFaculdade.Repository
 
             return novoCurso;
         }
+        public async Task AlterarCoordenadores(int id, List<int> idsEnviados)
+        {
+          
+            Curso? cursoOriginal = await _context.Cursos
+                .Include(c => c.Coordenador)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
+            if (cursoOriginal == null)
+            {
+                throw new Exception("Curso não encontrado para atualização.");
+            }
+
+
+            List<Funcionario> novosCoordenadores = await _context.Funcionarios
+                .Where(f => idsEnviados.Contains(f.Id))
+                .ToListAsync();
+
+            bool todosSaoCoordenadores = novosCoordenadores.All(f => f.Cargo == CargoFuncionario.Coordenador);
+            if (!todosSaoCoordenadores)
+            {
+                throw new Exception("Um ou mais IDs enviados não pertencem a funcionários com o cargo de Coordenador.");
+            }
+
+            cursoOriginal.Coordenador.Clear();
+
+            foreach (Funcionario coordenador in novosCoordenadores)
+            {
+                cursoOriginal.Coordenador.Add(coordenador);
+            }
+
+            await _context.SaveChangesAsync();
+        }
         public async Task UpdateAsync(Curso cursoAtualizado)
         {
             Curso? cursoOriginal = await _context.Cursos.FindAsync(cursoAtualizado.Id);

@@ -9,5 +9,6 @@ namespace ApiFaculdade.Controllers.DTOS
         public CargoFuncionario Cargo { get; set; }
         public string Departamento { get; set; } = string.Empty;
     }
+
 }
  

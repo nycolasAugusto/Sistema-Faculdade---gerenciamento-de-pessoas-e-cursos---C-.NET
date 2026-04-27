@@ -21,4 +21,8 @@ namespace ApiFaculdade.DTOS
         public List<int> CoordenadorIds { get; set; } = new List<int>();
 
     }
+    public class IdsCoordenadores{
+        [Required]
+        public List<int> CoordenadorIds {get; set;} = new List<int>();
+    }
 }

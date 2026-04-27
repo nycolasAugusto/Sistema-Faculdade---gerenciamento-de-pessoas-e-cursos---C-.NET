@@ -63,7 +63,7 @@ namespace ApiFaculdade.Controllers
                 return NotFound(new { mensagem = $"Turma com ID {turmaId} não encontrada." });
             }
 
-            return Ok(turmaAtualizada);
+            return Ok("Turma Atrelada ao curso com sucesso !");
         }
 
         [HttpPost]
