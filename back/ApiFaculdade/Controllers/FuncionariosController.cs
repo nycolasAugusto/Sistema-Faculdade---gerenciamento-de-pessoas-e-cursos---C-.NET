@@ -2,49 +2,47 @@ using ApiFaculdade.Controllers.DTOS;
 using ApiFaculdade.Models;
 using ApiFaculdade.Repository.interfaces;
 using Microsoft.AspNetCore.Mvc;
- 
+using Microsoft.AspNetCore.Authorization; // Adicionado
+
 namespace ApiFaculdade.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Coordenador")] // REGRA: Apenas Coordenador tem acesso aos endpoints abaixo
     public class FuncionariosController : ControllerBase
     {
         private readonly IFuncionarioRepository _repository;
- 
+
         public FuncionariosController(IFuncionarioRepository repository)
         {
             _repository = repository;
         }
- 
         
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetAll()
         {
             return Ok(await _repository.GetAllAsync());
         }
- 
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Funcionario>> GetById(int id)
         {
-            var funcionario = await _repository.GetByIdAsync(id);
+            Funcionario? funcionario = await _repository.GetByIdAsync(id);
             if (funcionario is null)
                 return NotFound(new { message = $"Funcionário com Id {id} não encontrado." });
- 
+
             return Ok(funcionario);
         }
- 
-       
+        
         [HttpGet("matricula/{matricula}")]
         public async Task<ActionResult<Funcionario>> GetByMatricula(string matricula)
         {
-            var funcionario = await _repository.GetByMatriculaAsync(matricula);
+            Funcionario? funcionario = await _repository.GetByMatriculaAsync(matricula);
             if (funcionario is null)
                 return NotFound(new { message = $"Funcionário com matrícula '{matricula}' não encontrado." });
- 
+
             return Ok(funcionario);
         }
- 
       
         [HttpGet("cargo/{cargo}")]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetByCargo(CargoFuncionario cargo)
@@ -64,7 +62,7 @@ namespace ApiFaculdade.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
  
-            var funcionario = new Funcionario
+            Funcionario funcionario = new Funcionario
             {
                 Nome         = dto.Nome,
                 Email        = dto.Email,
@@ -76,7 +74,6 @@ namespace ApiFaculdade.Controllers
  
             return CreatedAtAction(nameof(GetById), new { id = funcionario.Id }, funcionario);
         }
- 
       
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] Funcionario funcionario)
@@ -90,7 +87,6 @@ namespace ApiFaculdade.Controllers
             await _repository.UpdateAsync(funcionario);
             return NoContent();
         }
- 
         
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
