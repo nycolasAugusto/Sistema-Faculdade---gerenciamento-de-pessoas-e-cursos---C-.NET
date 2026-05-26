@@ -21,6 +21,7 @@ namespace ApiFaculdade.Models
         public string Nome { get; set; } = string.Empty;
         public string Matricula { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public string Senha { get; set; } = string.Empty;
         public CargoFuncionario Cargo { get; set; }
         public string Departamento { get; set; } = string.Empty;
         public DateTime DataAdmissao { get; set; }
