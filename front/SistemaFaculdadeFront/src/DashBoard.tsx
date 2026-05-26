@@ -16,8 +16,8 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
   }, []);
 
   async function carregarTurmas() {
-    // Busca todas se for coordenador, ou busca por ID se for professor
-    const url = perfil === 'Coordenador' 
+    // Gestor e Coordenador veem tudo. Professor vê apenas as próprias.
+    const url = (perfil === 'Coordenador' || perfil === 'Gestor') 
       ? 'http://localhost:5043/api/turmas' 
       : `http://localhost:5043/api/turmas/professor/${usuarioId}`;
 
@@ -26,11 +26,15 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
       headers: { 'Authorization': `Bearer ${token}` }
     });
     
-    const data = await response.json();
-    setTurmas(data);
+    if (response.ok) {
+      const data = await response.json();
+      setTurmas(data);
+    }
   }
 
   async function criarTurma() {
+    if (!novaTurma) return;
+
     await fetch('http://localhost:5043/api/turmas', {
       method: 'POST',
       headers: { 
@@ -40,34 +44,55 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
       body: JSON.stringify({ nome: novaTurma }) 
     });
     setNovaTurma('');
-    carregarTurmas(); // Atualiza a lista após criar
+    carregarTurmas(); 
   }
 
   function sairDaConta() {
-    setToken(''); // Ao limpar o token, o App.tsx joga de volta pro Login
+    setToken(''); 
   }
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <button onClick={sairDaConta}>Sair</button>
-      <h2>Bem-vindo, {perfil}</h2>
+  // Verifica se o usuário tem privilégios administrativos
+  const isAdmin = perfil === 'Coordenador' || perfil === 'Gestor';
 
-      {perfil === 'Coordenador' && (
-        <div style={{ border: '1px solid black', padding: '10px', marginBottom: '20px' }}>
-          <h3>Criar Turma</h3>
-          <input 
-            value={novaTurma} 
-            onChange={(e) => setNovaTurma(e.target.value)} 
-          />
-          <button onClick={criarTurma}>Salvar</button>
+  return (
+    <div className="dashboard-container">
+      <div className="header">
+        <h2>Bem-vindo, {perfil}</h2>
+        <button className="btn-danger" onClick={sairDaConta}>Sair do Sistema</button>
+      </div>
+
+      {isAdmin && (
+        <div className="admin-panel">
+          <h3 style={{ marginBottom: '15px' }}>Administração Rápida</h3>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <input 
+              className="input-field"
+              style={{ margin: 0 }}
+              placeholder="Nome da nova Turma..."
+              value={novaTurma} 
+              onChange={(e) => setNovaTurma(e.target.value)} 
+            />
+            <button className="btn-primary" style={{ margin: 0, width: 'auto', padding: '0 20px' }} onClick={criarTurma}>
+              Salvar
+            </button>
+          </div>
         </div>
       )}
 
-      <h3>{perfil === 'Coordenador' ? 'Todas as Turmas' : 'Minhas Turmas'}</h3>
-      <ul>
-        {turmas.map(turma => (
-          <li key={turma.id}>{turma.nome}</li>
-        ))}
+      <h3>{isAdmin ? 'Visão Geral das Turmas' : 'Minhas Turmas Atribuídas'}</h3>
+      <ul className="list-group" style={{ marginTop: '10px' }}>
+        {turmas.length === 0 ? (
+          <li className="list-item">Nenhuma turma encontrada.</li>
+        ) : (
+          turmas.map(turma => (
+            <li className="list-item" key={turma.id}>
+              <strong>{turma.nome}</strong> 
+              <span style={{ float: 'right', color: '#666', fontSize: '0.9em' }}>
+                Status: {turma.emAndamento ? 'Em Andamento' : 'Planejada'}
+              </span>
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );

@@ -1,6 +1,5 @@
 import { FormEvent, useState } from 'react';
 
-// Avisando ao TypeScript o que esse componente vai receber
 interface LoginProps {
   setToken: (token: string) => void;
   setPerfil: (perfil: string) => void;
@@ -19,6 +18,7 @@ export function Login({ setToken, setPerfil, setUsuarioId }: LoginProps) {
       const response = await fetch('http://localhost:5043/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        // O C# espera receber "email" e "senha" para preencher a classe Funcionario
         body: JSON.stringify({ email: usuario, senha: senha })
       });
 
@@ -26,7 +26,6 @@ export function Login({ setToken, setPerfil, setUsuarioId }: LoginProps) {
 
       const data = await response.json();
       
-      // Atualiza o estado lá no App.tsx. Isso faz a tela mudar na hora!
       setToken(data.token);
       setPerfil(data.perfil);
       setUsuarioId(data.usuarioId);
@@ -37,26 +36,32 @@ export function Login({ setToken, setPerfil, setUsuarioId }: LoginProps) {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Login</h1>
-      {erro && <p style={{ color: 'red' }}>{erro}</p>}
-      
-      <form onSubmit={handleSubmit}>
-        <input 
-          placeholder="E-mail" 
-          value={usuario} 
-          onChange={(e) => setUsuario(e.target.value)} 
-        />
-        <br/><br/>
-        <input 
-          type="password" 
-          placeholder="Senha" 
-          value={senha} 
-          onChange={(e) => setSenha(e.target.value)} 
-        />
-        <br/><br/>
-        <button type="submit">Entrar no Sistema</button>
-      </form>
+    <div className="login-container">
+      <div className="login-box">
+        <h2 style={{ marginBottom: '20px' }}>Sistema Acadêmico</h2>
+        
+        {erro && <p style={{ color: 'red', marginBottom: '10px' }}>{erro}</p>}
+        
+        <form onSubmit={handleSubmit}>
+          <input 
+            className="input-field"
+            type="email"
+            placeholder="E-mail de acesso" 
+            value={usuario} 
+            onChange={(e) => setUsuario(e.target.value)} 
+            required
+          />
+          <input 
+            className="input-field"
+            type="password" 
+            placeholder="Senha" 
+            value={senha} 
+            onChange={(e) => setSenha(e.target.value)} 
+            required
+          />
+          <button className="btn-primary" type="submit">Entrar no Sistema</button>
+        </form>
+      </div>
     </div>
   );
 }

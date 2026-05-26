@@ -17,6 +17,30 @@ namespace ApiFaculdade.Controllers
         {
             _repository = repository;
         }
+
+       [HttpPost]
+        [Authorize(Roles = "Gestor")] 
+        public async Task<ActionResult<Funcionario>> Create([FromBody] CriarFuncionarioDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+ 
+            Funcionario funcionario = new Funcionario
+            {
+                Nome         = dto.Nome,
+                Email        = dto.Email,
+                Cargo        = dto.Cargo,
+                Departamento = dto.Departamento,
+                // Lembre-se de definir uma senha padrão ou pedir no DTO para o novo usuário criado
+                Senha        = "faculdade123" 
+            };
+ 
+            await _repository.AddAsync(funcionario);
+ 
+            return CreatedAtAction(nameof(GetById), new { id = funcionario.Id }, funcionario);
+        }
+
+
         
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Funcionario>>> GetAll()
@@ -56,24 +80,7 @@ namespace ApiFaculdade.Controllers
             return Ok(await _repository.GetByDepartamentoAsync(departamento));
         }
  
-        [HttpPost]
-        public async Task<ActionResult<Funcionario>> Create([FromBody] CriarFuncionarioDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
- 
-            Funcionario funcionario = new Funcionario
-            {
-                Nome         = dto.Nome,
-                Email        = dto.Email,
-                Cargo        = dto.Cargo,
-                Departamento = dto.Departamento
-            };
- 
-            await _repository.AddAsync(funcionario);
- 
-            return CreatedAtAction(nameof(GetById), new { id = funcionario.Id }, funcionario);
-        }
+        
       
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] Funcionario funcionario)
