@@ -40,7 +40,13 @@ namespace ApiFaculdade.Controllers;
             }
         }
 
-        
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CursoRespostaDto>>> GetAll()
+        {
+            // O React precisa dessa rota para buscar os dados.
+            // Se o seu repositório tiver outro nome (ex: BuscarTodosAsync), é só trocar aqui:
+            return Ok(await _repository.GetAllAsync()); 
+        }
 
         [HttpPost]
         public async Task<ActionResult<Curso>> PostCurso(CriarCursoDto dto)

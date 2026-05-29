@@ -8,7 +8,7 @@ namespace ApiFaculdade.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Coordenador")] // REGRA: Apenas Coordenador tem acesso aos endpoints abaixo
+    [Authorize(Roles = "Coordenador, Gestor")] // REGRA: Apenas Coordenador tem acesso aos endpoints abaixo
     public class FuncionariosController : ControllerBase
     {
         private readonly IFuncionarioRepository _repository;
