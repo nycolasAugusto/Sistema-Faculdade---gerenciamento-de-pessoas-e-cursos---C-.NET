@@ -8,7 +8,7 @@ namespace ApiFaculdade.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Coordenador, Gestor")] // REGRA: Apenas Coordenador tem acesso aos endpoints abaixo
+    [Authorize(Roles = "Coordenador,Gestor")] // REGRA: Apenas Coordenador tem acesso aos endpoints abaixo
     public class FuncionariosController : ControllerBase
     {
         private readonly IFuncionarioRepository _repository;
@@ -19,7 +19,7 @@ namespace ApiFaculdade.Controllers
         }
 
        [HttpPost]
-        [Authorize(Roles = "Gestor")] 
+       [Authorize(Roles = "Coordenador,Gestor")]  
         public async Task<ActionResult<Funcionario>> Create([FromBody] CriarFuncionarioDto dto)
         {
             if (!ModelState.IsValid)

@@ -66,8 +66,9 @@ namespace ApiFaculdade.Repository
                 throw new Exception("Funcionário não encontrado para atualização.");
             }
 
-            funcionarioOriginal.Nome = funcionario.Nome;
-            funcionarioOriginal.Cargo = funcionario.Cargo;
+            funcionarioOriginal.Nome         = funcionario.Nome;
+            funcionarioOriginal.Email        = funcionario.Email;        // ← estava faltando
+            funcionarioOriginal.Cargo        = funcionario.Cargo;
             funcionarioOriginal.Departamento = funcionario.Departamento;
 
             _context.Funcionarios.Update(funcionarioOriginal);

@@ -31,13 +31,13 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(); 
 // ==========================================
-
-builder.Services.AddControllers(); 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite("Data Source=app.db"));
 
 // Escopos de IRepositorys
+
 builder.Services.AddScoped<ICursoRepository, CursoRepository>();
 builder.Services.AddScoped<IAlunoRepository, AlunoRepository>();
 builder.Services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
@@ -52,6 +52,7 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
 
 var app = builder.Build();
 app.UseCors("PermitirFrontEnd");
