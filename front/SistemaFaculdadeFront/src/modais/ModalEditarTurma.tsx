@@ -4,7 +4,7 @@ export type ModalTurmaState = {
   id: number;
   nome: string;
   professorId: string;
-  cursosIds: string;
+  cursosIds: number[];  // ← array de inteiros agora
   emAndamento: boolean;
 };
 
@@ -13,9 +13,22 @@ interface Props {
   onChange: (dados: ModalTurmaState) => void;
   onSalvar: () => void;
   onFechar: () => void;
+  cursos: any[];
+  professores: any[];
 }
 
-export function ModalEditarTurma({ dados, onChange, onSalvar, onFechar }: Props) {
+export function ModalEditarTurma({ dados, onChange, onSalvar, onFechar, cursos, professores }: Props) {
+
+  function toggleCurso(id: number) {
+    const jaTemn = dados.cursosIds.includes(id);
+    onChange({
+      ...dados,
+      cursosIds: jaTemn
+        ? dados.cursosIds.filter(c => c !== id)
+        : [...dados.cursosIds, id],
+    });
+  }
+
   return (
     <div className="modal-overlay" onClick={onFechar}>
       <div className="modal-box" onClick={e => e.stopPropagation()}>
@@ -30,20 +43,53 @@ export function ModalEditarTurma({ dados, onChange, onSalvar, onFechar }: Props)
           onChange={e => onChange({ ...dados, nome: e.target.value })}
         />
 
-        <label className="field-label">ID do Professor</label>
-        <input
+        {/* SELECT PROFESSOR */}
+        <label className="field-label">Professor</label>
+        <select
           className="input-field"
-          type="number"
           value={dados.professorId}
           onChange={e => onChange({ ...dados, professorId: e.target.value })}
-        />
+        >
+          <option value="">-- Selecione --</option>
+          {professores.map((f: any) => {
+            const id   = f.id   ?? f.Id;
+            const nome = f.nome ?? f.Nome ?? '';
+            return <option key={id} value={id}>{nome}</option>;
+          })}
+        </select>
 
-        <label className="field-label">IDs dos Cursos (ex: 1, 2)</label>
-        <input
-          className="input-field"
-          value={dados.cursosIds}
-          onChange={e => onChange({ ...dados, cursosIds: e.target.value })}
-        />
+        {/* MULTI-SELECT CURSOS */}
+        <label className="field-label">Cursos (clique para selecionar)</label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px', marginBottom: '8px' }}>
+          {cursos.map((c: any) => {
+            const id   = c.id   ?? c.Id;
+            const nome = c.nomeCurso ?? c.NomeCurso ?? `Curso ${id}`;
+            const selecionado = dados.cursosIds.includes(id);
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => toggleCurso(id)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: '8px',
+                  border: selecionado ? '2px solid #f5a623' : '1px solid #2a3050',
+                  background: selecionado ? 'rgba(245,166,35,0.15)' : 'transparent',
+                  color: selecionado ? '#f5a623' : '#8b91a8',
+                  cursor: 'pointer',
+                  fontSize: '0.85rem',
+                  fontWeight: selecionado ? 700 : 400,
+                  transition: '0.15s',
+                }}
+              >
+                {nome}
+              </button>
+            );
+          })}
+          {cursos.length === 0 && (
+            <span style={{ color: '#8b91a8', fontSize: '0.85rem' }}>Nenhum curso disponível.</span>
+          )}
+        </div>
 
         <label className="checkbox-label">
           <input

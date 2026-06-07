@@ -18,12 +18,12 @@ interface DashboardProps {
 
 export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps) {
   const [abaAtual, setAbaAtual] = useState('turmas');
-  const isAdmin = perfil === 'Coordenador' || perfil === 'Gestor';
+  const isAdmin    = perfil === 'Coordenador' || perfil === 'Gestor';
   const isProfessor = perfil === 'Professor';
 
-  const [turmas, setTurmas] = useState<any[]>([]);
-  const [alunos, setAlunos] = useState<any[]>([]);
-  const [cursos, setCursos] = useState<any[]>([]);
+  const [turmas, setTurmas]           = useState<any[]>([]);
+  const [alunos, setAlunos]           = useState<any[]>([]);
+  const [cursos, setCursos]           = useState<any[]>([]);
   const [funcionarios, setFuncionarios] = useState<any[]>([]);
 
   useEffect(() => {
@@ -52,9 +52,7 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
             const meuId = parseInt(usuarioId);
             setCursos(todos.filter((c: any) => {
               const coords = c.coordenadores ?? c.Coordenadores ?? [];
-              return coords.some((coord: any) =>
-                (coord.id ?? coord.Id) === meuId
-              );
+              return coords.some((coord: any) => (coord.id ?? coord.Id) === meuId);
             }));
           } else {
             setCursos(todos);
@@ -72,7 +70,6 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
   return (
     <div className="dashboard-container">
       <Header perfil={perfil} onSair={() => setToken('')} />
-
       <TabMenu abaAtual={abaAtual} isAdmin={isAdmin} onChange={setAbaAtual} />
 
       {abaAtual === 'turmas' && (
@@ -81,6 +78,8 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
           isAdmin={isAdmin}
           isProfessor={isProfessor}
           turmas={turmas}
+          cursos={cursos}
+          professores={funcionarios}
           onRecarregar={carregarTudo}
         />
       )}

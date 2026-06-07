@@ -3,6 +3,16 @@
 import { useState } from 'react';
 import { ModalEditarCurso, ModalCursoState } from '../../modais/ModalEditarCurso';
 
+// Enum real do back-end (Cursos.cs)
+const NOMES_CURSO = [
+  { valor: 0, label: 'Tecnologia' },
+  { valor: 1, label: 'Engenharia' },
+  { valor: 2, label: 'Saude' },
+  { valor: 3, label: 'Administracao' },
+  { valor: 4, label: 'Direito' },
+  { valor: 5, label: 'Artes' },
+];
+
 interface Props {
   token: string;
   cursos: any[];
@@ -55,7 +65,7 @@ export function CursosAba({ token, cursos, onRecarregar }: Props) {
     onRecarregar();
   }
 
-  // ── PUT — só dados do curso, sem coordenadores
+  // ── PUT ───────────────────────────────────────────────
   async function salvarEdicao() {
     if (!modal) return;
     const res = await fetch(`http://localhost:5043/api/cursos/${modal.id}`, {
@@ -101,9 +111,9 @@ export function CursosAba({ token, cursos, onRecarregar }: Props) {
           <div className="full-width">
             <label className="field-label">Curso</label>
             <select className="input-field" value={nomeCursoEnum} onChange={e => setNomeCursoEnum(e.target.value)}>
-              <option value="0">Sistemas de Informação</option>
-              <option value="1">Engenharia de Software</option>
-              <option value="2">Ciência da Computação</option>
+              {NOMES_CURSO.map(c => (
+                <option key={c.valor} value={c.valor}>{c.label}</option>
+              ))}
             </select>
           </div>
           <div>
