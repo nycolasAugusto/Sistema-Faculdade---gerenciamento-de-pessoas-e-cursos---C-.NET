@@ -10,9 +10,11 @@ namespace ApiFaculdade.DTOS
         public string Email { get; set; } = string.Empty;
         public int Periodo { get; set; }
         public bool Ativo { get; set; }
+        public int CursoId { get; set; }          // ← adicionado
         public string NomeCurso { get; set; } = string.Empty;
         public List<string> NomesDasTurmas { get; set; } = new List<string>();
     }
+
     public class AtualizarAlunoDto
     {
         [Required]
@@ -23,7 +25,7 @@ namespace ApiFaculdade.DTOS
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O e-mail é obrigatório.")]
-        [EmailAddress(ErrorMessage = "Formato de e-mail inválido.")]
+        [RegularExpression(@".*@.*", ErrorMessage = "O e-mail deve conter @.")]
         public string Email { get; set; } = string.Empty;
 
         [Required]

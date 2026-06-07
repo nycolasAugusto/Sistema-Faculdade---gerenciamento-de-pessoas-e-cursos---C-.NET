@@ -26,7 +26,10 @@ export function AlunosAba({ token, alunos, onRecarregar }: Props) {
         periodo: parseInt(periodo) || 1,
       }),
     });
-    if (!res.ok) return alert('❌ ERRO: ' + (await res.json()).message);
+    if (!res.ok) {
+      const erro = await res.json().catch(() => ({}));
+      return alert('❌ ERRO: ' + (erro.message || `Status ${res.status}`));
+    }
     setNome(''); setEmail(''); setCursoId(''); setPeriodo('');
     onRecarregar();
   }
@@ -46,27 +49,31 @@ export function AlunosAba({ token, alunos, onRecarregar }: Props) {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
       body: JSON.stringify({
-        id: modal.id,
-        nome: modal.nome,
-        email: modal.email,
+        id:      modal.id,
+        nome:    modal.nome,
+        email:   modal.email,
         cursoId: parseInt(modal.cursoId) || 0,
         periodo: parseInt(modal.periodo) || 1,
-        ativo: modal.ativo,
+        ativo:   modal.ativo,
       }),
     });
-    if (!res.ok) return alert('❌ ERRO: ' + ((await res.json()).message || 'Verifique os dados.'));
+    if (!res.ok) {
+      const erro = await res.json().catch(() => ({}));
+      return alert('❌ ERRO: ' + (erro.message || 'Verifique os dados.'));
+    }
     setModal(null);
     onRecarregar();
   }
 
   function abrirModal(a: any) {
     setModal({
-      id: a.id,
-      nome: a.nome || '',
-      email: a.email || '',
-      cursoId: a.cursoId?.toString() || '',
-      periodo: a.periodo?.toString() || '1',
-      ativo: a.ativo ?? true,
+      id:      a.id      ?? a.Id,
+      nome:    a.nome    ?? a.Nome    ?? '',
+      email:   a.email   ?? a.Email   ?? '',
+      // CursoId agora vem no DTO — trata camelCase e PascalCase
+      cursoId: (a.cursoId ?? a.CursoId ?? '').toString(),
+      periodo: (a.periodo ?? a.Periodo ?? 1).toString(),
+      ativo:   a.ativo   ?? a.Ativo   ?? true,
     });
   }
 
@@ -97,19 +104,25 @@ export function AlunosAba({ token, alunos, onRecarregar }: Props) {
 
       <p className="section-title">Lista de Alunos</p>
       <ul className="list-group">
-        {alunos.length > 0 ? alunos.map(a => (
-          <li className="list-item" key={a.id}>
-            <div className="list-item-info">
-              <span className="list-item-id">ID {a.id}</span>
-              <span className="list-item-name">{a.nome}</span>
-              <span className="list-item-sub">{a.email} · {a.nomeCurso}</span>
-            </div>
-            <div className="list-item-actions">
-              <button className="btn-edit" onClick={() => abrirModal(a)}>✏️ Editar</button>
-              <button className="btn-danger" onClick={() => deletar(a.id)}>🗑️</button>
-            </div>
-          </li>
-        )) : <li className="list-empty">Nenhum aluno carregado.</li>}
+        {alunos.length > 0 ? alunos.map(a => {
+          const id     = a.id    ?? a.Id;
+          const nome   = a.nome  ?? a.Nome  ?? '';
+          const email  = a.email ?? a.Email ?? '';
+          const curso  = a.nomeCurso ?? a.NomeCurso ?? '';
+          return (
+            <li className="list-item" key={id}>
+              <div className="list-item-info">
+                <span className="list-item-id">ID {id}</span>
+                <span className="list-item-name">{nome}</span>
+                <span className="list-item-sub">{email} · {curso}</span>
+              </div>
+              <div className="list-item-actions">
+                <button className="btn-edit" onClick={() => abrirModal(a)}>✏️ Editar</button>
+                <button className="btn-danger" onClick={() => deletar(id)}>🗑️</button>
+              </div>
+            </li>
+          );
+        }) : <li className="list-empty">Nenhum aluno carregado.</li>}
       </ul>
 
       {modal && (

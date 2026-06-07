@@ -7,7 +7,6 @@ export type ModalCursoState = {
   dataInicio: string;
   dataFim: string;
   campus: string;
-  coordenadorIds: string;
 };
 
 interface Props {
@@ -70,14 +69,6 @@ export function ModalEditarCurso({ dados, onChange, onSalvar, onFechar }: Props)
               type="date"
               value={dados.dataFim}
               onChange={e => onChange({ ...dados, dataFim: e.target.value })}
-            />
-          </div>
-          <div className="full-width">
-            <label className="field-label">IDs dos Coordenadores (ex: 1, 2)</label>
-            <input
-              className="input-field"
-              value={dados.coordenadorIds}
-              onChange={e => onChange({ ...dados, coordenadorIds: e.target.value })}
             />
           </div>
         </div>

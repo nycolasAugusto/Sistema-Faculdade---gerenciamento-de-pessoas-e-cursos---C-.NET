@@ -49,9 +49,13 @@ export function Dashboard({ token, perfil, usuarioId, setToken }: DashboardProps
         if (res.ok) {
           const todos = await res.json();
           if (perfil === 'Coordenador') {
-            setCursos(todos.filter((c: any) =>
-              c.coordenadores?.some((coord: any) => coord.id === parseInt(usuarioId))
-            ));
+            const meuId = parseInt(usuarioId);
+            setCursos(todos.filter((c: any) => {
+              const coords = c.coordenadores ?? c.Coordenadores ?? [];
+              return coords.some((coord: any) =>
+                (coord.id ?? coord.Id) === meuId
+              );
+            }));
           } else {
             setCursos(todos);
           }

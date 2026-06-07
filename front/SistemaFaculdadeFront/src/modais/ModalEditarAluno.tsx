@@ -4,7 +4,7 @@ export type ModalAlunoState = {
   id: number;
   nome: string;
   email: string;
-  cursoId: string;
+  cursoId: string;  // mantido internamente para enviar no PUT
   periodo: string;
   ativo: boolean;
 };
@@ -39,15 +39,6 @@ export function ModalEditarAluno({ dados, onChange, onSalvar, onFechar }: Props)
               className="input-field"
               value={dados.email}
               onChange={e => onChange({ ...dados, email: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="field-label">ID do Curso</label>
-            <input
-              className="input-field"
-              type="number"
-              value={dados.cursoId}
-              onChange={e => onChange({ ...dados, cursoId: e.target.value })}
             />
           </div>
           <div>

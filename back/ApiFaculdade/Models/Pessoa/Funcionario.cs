@@ -26,5 +26,6 @@ namespace ApiFaculdade.Models
         public string Departamento { get; set; } = string.Empty;
         public DateTime DataAdmissao { get; set; }
         public bool? Ativo { get; set; } = true;
+        public int? CursoId { get; set; }   // ← adicionar essa linha
     }
 }
